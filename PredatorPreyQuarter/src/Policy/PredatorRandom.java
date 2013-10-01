@@ -49,8 +49,9 @@ public class PredatorRandom implements Policy{
 		actprob = policyCollections.get(cs);
 		Random       random    = new Random();
 		List<String> keys      = new ArrayList<String>(actprob.keySet());
-		String       randomKey = keys.get( random.nextInt(keys.size()) );
-		return Statespace.transformAction(cs, randomKey);
+		String       randomKey = keys.get( random.nextInt(keys.size()));
+		
+		return Statespace.transformAction(Statespace.getPredator(cs), randomKey);
 	}
 	
 	public Map<String, Map<String, Double>> getPolicyCollections() {

@@ -73,7 +73,8 @@ public class Statespace {
 			return null;
 	}
 	
-	public static String transformAction(Position p, String action){
+	//Transform action according to position of predator
+	public static String transformAction2(Position p, String action){
 		if (p.getX()>=0 && p.getY()>=0){
 			return action;
 		} else if (p.getX()>=0 && p.getY()<0){
@@ -109,16 +110,16 @@ public class Statespace {
 //			return null;
 		}
 	}
-	public static String transformAction(String state, String action){
-		Predator pred = getPredator(state);
+	public static String transformAction(Position pred, String action){
+//		Predator pred = getPredator(state);
 //		Prey prey = getPrey(state);
 		Position predNext = Position.move(pred,action);
 		if ((pred.getX()==0||pred.getY()==0)&&(predNext.getX()==0||predNext.getY()==0)){
-			return transformAction(predNext, action);
+			return transformAction2(predNext, action);
 		} else if (pred.getX()==0||pred.getY()==0){
-			return transformAction(predNext, action);
+			return transformAction2(predNext, action);
 		} else 
-			return transformAction(pred, action);
+			return transformAction2(pred, action);
 		
 	}
 	

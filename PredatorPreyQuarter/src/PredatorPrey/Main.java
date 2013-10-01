@@ -43,6 +43,14 @@ public class Main {
 ////		    String s = m.group(1);
 //		    // s now contains "BAR"
 //		}
+		System.out.println(Math.random());
+		String a="halo";
+		String b="uuuu";
+		System.out.println(a+b);
+		double x=-10;
+		double y=3;
+		if (y>x)
+			System.out.println("hall");
 	}
 
 }

@@ -35,6 +35,22 @@ public class Position {
 		this.y = wrap(y);
 	}
 	
+	public void toQuarter(){
+		if (this.getX()>=0 && this.getY()>=0){
+//			return new Position(this.getX(), this.getY());
+		} else if (this.getX()>=0 && this.getY()<0){
+			//Quadran I
+			this.y = -this.getY();
+		} else if (this.getX()<0 && this.getY()<0){
+			//Quadran II
+			this.x = -this.getX();
+			this.y = -this.getY();
+		} else if (this.getX()<0 && this.getY()>=0){
+			//Quadran III
+			this.x = -this.getX();
+		}
+	}
+	
 	public int getX(){
 		return this.x;
 	}
@@ -44,14 +60,17 @@ public class Position {
 	}
 
 	public void move(String move) {
+		this.toQuarter();
 		if(move.equals("north"))
 		    this.update(x, y-1);
-		if(move.equals("south"))
+		else if(move.equals("south"))
 			this.update(x, y+1);
-		if(move.equals("west"))
+		else if(move.equals("west"))
 			this.update(x-1, y);
-		if(move.equals("east"))
+		else if(move.equals("east"))
 			this.update(x+1, y);
+		this.toQuarter();
+		
 	}
 	
 	public static int[] absoluteToRelative(int x1, int y1, int x2, int y2){

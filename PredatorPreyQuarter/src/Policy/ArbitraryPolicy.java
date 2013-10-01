@@ -83,11 +83,16 @@ public class ArbitraryPolicy implements Policy{
 	
 	
 	public void updateAction(String key, String action){
-		policyCollections.put(key, action);
+		policyCollections.put(this.statespace.toState(key), action);
 	}
 	
 	public String getAction(String key){
 		return policyCollections.get(this.statespace.toState(key));
+	}
+	
+	public String getAction(String key, Position pred){
+		String action = policyCollections.get(this.statespace.toState(key));
+		return Statespace.transformAction(pred, action);
 	}
 
 	@Override
