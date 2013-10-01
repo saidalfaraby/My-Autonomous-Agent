@@ -28,6 +28,7 @@ public class EGreedyPolicy implements Policy{
 		Random rand = new Random();
 		int index;
 		if (Math.random()<this.e){
+			
 			Actions.remove(maxAction);
 			index = rand.nextInt(Actions.size());
 			return Actions.get(index);
@@ -51,7 +52,7 @@ public class EGreedyPolicy implements Policy{
 		if (a.equals(maxAction))
 			return 1-this.e;
 		else
-			return e/4;
+			return e/(Actions.size()-1);
 	}
 
 	@Override

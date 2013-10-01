@@ -52,7 +52,7 @@ public class OffPolicyMC {
 	public OffPolicyMC(Statespace sp, Policy Pi){
 		this.Pi = Pi;
 		this.statespace = sp;
-		this.preyPolicy = preyPolicy;
+//		this.preyPolicy = preyPolicy;
 		initialize();
 	}
 	
@@ -64,9 +64,11 @@ public class OffPolicyMC {
 		N = new HashMap<String, Double>();
 		D = new HashMap<String, Double>();
 		for (String state : this.statespace.getStateCollections().keySet()){
+			if (Statespace.isEndState(state))
+				continue;
 				for (String action:this.Actions){
 					String key = state+"-"+action;
-					Q.put(key,Math.random() * 5+1);
+					Q.put(key,0.0);
 					N.put(key,0.0);
 					D.put(key,0.0);
 				}
@@ -91,23 +93,23 @@ public class OffPolicyMC {
 		Predator pred = new Predator(i,j, PiPrime);
 		Prey prey = new Prey(preyDefault, preyPolicy);
 		String predAction=null;
-		String preyAction=null;
-		Double r=0.0;
+//		String preyAction=null;
 		String currentState = this.statespace.toState(pred, prey);
 		int counter=0;
-		do {
+		while (! Statespace.isEndState(currentState)){
 			counter++;
 			predAction = PiPrime.getAction(currentState);
-			dataEpisode.add(new DataEpisode(currentState,r,predAction));
+			dataEpisode.add(new DataEpisode(currentState,getReward(currentState),predAction));
 			pred.move(predAction);
 			currentState = this.statespace.toState(pred, prey);
-			prey.getActionAndMove(pred, currentState);
-			currentState = this.statespace.toState(pred, prey);
-			r = getReward(currentState);
-			//Save the last State
-			if (Statespace.isEndState(currentState))
-				dataEpisode.add(new DataEpisode(currentState,r,null));
-		}while (! Statespace.isEndState(currentState));
+			if (Statespace.isEndState(currentState)){
+				//Save the last State
+				dataEpisode.add(new DataEpisode(currentState,getReward(currentState),null));
+			} else{
+				prey.getActionAndMove(pred, currentState);
+				currentState = this.statespace.toState(pred, prey);
+			}
+		}
 		return dataEpisode;
 	}
 	
@@ -132,7 +134,7 @@ public class OffPolicyMC {
 			 }
 			 
 			 
-			 String tempState;
+//			 String tempState;
 			 String tempStateString;
 			 String tempAction;
 			 int t=0;
@@ -189,31 +191,33 @@ public class OffPolicyMC {
 //			 for (String action : this.Q.keySet())
 //				 System.out.println(action);
 			 for (String state : this.statespace.getStateCollections().keySet()){
-					 double maxQ=-10;
-					 String maxAction=null;
-					 //Iterate over all actions
-//					 System.out.println("Size actions "+Actions.size());
-					 for (String action : Actions){
-						 stateAction = state+"-"+action;
-						 Qval = this.Q.get(stateAction);
-//						 System.out.println(action+" "+Qval);
-//						 System.out.println(Qval);
-						 if (Qval>=maxQ){
-							 maxQ = Qval;
-							 maxAction = action;
-						 }
+				 if (Statespace.isEndState(state))
+					continue;
+				 double maxQ=-10;
+				 String maxAction=null;
+				 //Iterate over all actions
+//				 System.out.println("Size actions "+Actions.size());
+				 for (String action : Actions){
+					 stateAction = state+"-"+action;
+					 Qval = this.Q.get(stateAction);
+//					 System.out.println(action+" "+Qval);
+//					 System.out.println(Qval);
+					 if (Qval>=maxQ){
+						 maxQ = Qval;
+						 maxAction = action;
 					 }
-					 //Assign max action to the policy
-					 ((ArbitraryPolicy)this.Pi).updateAction(state, maxAction);
 				 }
+				 //Assign max action to the policy
+				 ((ArbitraryPolicy)this.Pi).updateAction(state, maxAction);
+			 }
 //			 System.out.println("Size Q : "+this.Q.size());
 //			 System.out.println("Size N : "+this.N.size());
 //			 System.out.println("Size D : "+this.D.size());
 //			 System.out.println("Size table : "+tableFirstTimeOccurence);
-//			 System.out.println("Size D : "+this.D.size());
+//		 	 System.out.println("Size D : "+this.D.size());
 			 
-			 
-		}while (counter <20000);
+			 System.out.println(counter);
+		}while (counter <2000);
 	}
 	
 	public Policy getPi() {
@@ -227,12 +231,12 @@ public class OffPolicyMC {
 		OffPolicyMC off = new OffPolicyMC(sp,Pi);
 		
 		off.doControl();
-//		Map<String, String > collection = ((ArbitraryPolicy)off.getPi()).getPolicyCollections();
-//		for (Map.Entry<String, String> entry : collection.entrySet()) {
-//		    String key = entry.getKey();
-//		    String value = entry.getValue();
-//		    System.out.println(key);
-//		}
+		
+		for (String key : off.Q.keySet()){
+			System.out.println(key+" = "+off.Q.get(key));
+		}
+		
+		
 		String key;
 		String action;
 		for (int i=0;i<6;i++){

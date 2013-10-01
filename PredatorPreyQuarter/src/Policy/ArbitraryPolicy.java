@@ -34,9 +34,6 @@ public class ArbitraryPolicy implements Policy{
 		Prey prey = new Prey(preyDefault, preyPolicy);
 		Double r=0.0;
 		String currentState = this.statespace.toState(pred, prey);
-		String predAction=null;
-		String preyAction=null;
-		
 		boolean valid=true;
 		int counter=0;
 		do {
